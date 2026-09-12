@@ -1,0 +1,6 @@
+{
+  "name": "Dr. Rana Fida Hussain Physiotherapy Clinic",
+  "description": "Premium physiotherapy clinic in Sialkot, Pakistan. Consultant Physiotherapist Dr. Rana Fida Hussain specializing in Pediatric Physiotherapy, Sports Rehabilitation, Chronic Pain Management, Post-Surgical Rehabilitation, Home Physiotherapy, and Hijama.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

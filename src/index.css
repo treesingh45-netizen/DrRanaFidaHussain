@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Cormorant Garamond", "Playfair Display", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", "Manrope", system-ui, sans-serif;
+  --font-signature: "Alex Brush", cursive;
+
+  --color-navy-900: #1b2833;
+  --color-navy: #243442;
+  --color-navy-light: #344452;
+  --color-gold: #C5B27A;
+  --color-gold-soft: #D2C49A;
+  --color-gold-light: #F4EEDC;
+  --color-clinic-grey: #A7A9AA;
+  --color-clinic-bg: #FAF9F5;
+  --color-clinic-dark: #20262B;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: #FAF9F5;
+    color: #20262B;
+  }
+}
+
+.font-editorial {
+  font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif;
+}
+
+.font-body {
+  font-family: "Plus Jakarta Sans", "Manrope", system-ui, sans-serif;
+}
+
+.font-signature {
+  font-family: "Alex Brush", cursive;
+}
+
