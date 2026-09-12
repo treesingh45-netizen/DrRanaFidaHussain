@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Calendar, CheckCircle2, Phone, MessageSquare, Clock } from 'lucide-react';
 import { AppointmentFormData } from '../types';
 import { CLINIC_INFO, SERVICES_DATA } from '../data/clinicData';
@@ -27,6 +27,17 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Close modal on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const handleChange = (
@@ -43,7 +54,7 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
     setTimeout(() => {
       setIsSubmitting(false);
       setSubmitted(true);
-    }, 600);
+    }, 500);
   };
 
   const handleWhatsAppDirect = () => {
@@ -61,38 +72,44 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
   return (
     <div
       id="appointment-modal-overlay"
-      className="fixed inset-0 z-50 overflow-y-auto bg-[#20262B]/60 backdrop-blur-xs flex items-center justify-center p-4"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      className="fixed inset-0 z-50 overflow-y-auto bg-[#20262B]/70 backdrop-blur-xs flex items-start sm:items-center justify-center p-3 sm:p-4 py-6 sm:py-8"
     >
       <div
         id="appointment-modal-card"
-        className="relative bg-[#FAF9F5] border border-[#243442]/15 rounded-xl shadow-2xl max-w-lg w-full p-6 sm:p-8 text-[#20262B]"
+        className="relative bg-[#FAF9F5] border border-[#243442]/15 rounded-2xl shadow-2xl max-w-md w-full p-5 sm:p-6 text-[#20262B] my-auto animate-in fade-in zoom-in-95 duration-200"
       >
+        {/* Prominent, easily clickable Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-[#344452] hover:text-[#243442] transition-colors rounded-full hover:bg-[#243442]/5"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 w-9 h-9 rounded-full bg-white border border-[#243442]/20 text-[#243442] hover:bg-[#243442] hover:text-[#FAF9F5] hover:border-[#243442] transition-all flex items-center justify-center shadow-xs cursor-pointer z-10"
           aria-label="Close modal"
+          title="Close appointment window"
         >
-          <X className="w-5 h-5" />
+          <X className="w-5 h-5" strokeWidth={2.5} />
         </button>
 
         {!submitted ? (
           <div>
-            <div className="text-left mb-6">
-              <span className="text-[11px] uppercase tracking-[0.2em] text-[#C5B27A] font-semibold">
+            {/* Header: compact & distinct */}
+            <div className="text-left pr-10 mb-4">
+              <span className="text-[10px] uppercase tracking-[0.2em] text-[#C5B27A] font-bold block">
                 Clinical Consultation
               </span>
-              <h3 className="font-serif text-2xl font-semibold text-[#243442] mt-1">
+              <h3 className="font-serif text-xl sm:text-2xl font-semibold text-[#243442] mt-0.5">
                 Request an Appointment
               </h3>
-              <p className="text-xs text-[#344452] mt-1.5 leading-relaxed">
-                Consultant Physiotherapist Dr. Rana Fida Hussain • Sialkot Clinic & Home Visits
+              <p className="text-[11px] sm:text-xs text-[#344452] mt-0.5 leading-tight">
+                Dr. Rana Fida Hussain • Sialkot Clinic & Home Visits
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3">
               <div>
-                <label className="block text-xs font-medium text-[#243442] mb-1">
-                  Full Name <span className="text-[#C5B27A]">*</span>
+                <label className="block text-[11px] font-medium text-[#243442] mb-0.5">
+                  Full Name <span className="text-[#C5B27A] font-bold">*</span>
                 </label>
                 <input
                   type="text"
@@ -101,14 +118,14 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
                   value={formData.fullName}
                   onChange={handleChange}
                   placeholder="e.g. Muhammad Ali"
-                  className="w-full text-xs px-3 py-2.5 rounded-lg border border-[#243442]/20 bg-white focus:outline-none focus:border-[#C5B27A] focus:ring-1 focus:ring-[#C5B27A] text-[#20262B]"
+                  className="w-full text-xs px-3 py-2 rounded-lg border border-[#243442]/20 bg-white focus:outline-none focus:border-[#C5B27A] focus:ring-1 focus:ring-[#C5B27A] text-[#20262B]"
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div>
-                  <label className="block text-xs font-medium text-[#243442] mb-1">
-                    Phone Number <span className="text-[#C5B27A]">*</span>
+                  <label className="block text-[11px] font-medium text-[#243442] mb-0.5">
+                    Phone Number <span className="text-[#C5B27A] font-bold">*</span>
                   </label>
                   <input
                     type="tel"
@@ -117,12 +134,12 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
                     value={formData.phone}
                     onChange={handleChange}
                     placeholder="03XX XXXXXXX"
-                    className="w-full text-xs px-3 py-2.5 rounded-lg border border-[#243442]/20 bg-white focus:outline-none focus:border-[#C5B27A] focus:ring-1 focus:ring-[#C5B27A] text-[#20262B]"
+                    className="w-full text-xs px-3 py-2 rounded-lg border border-[#243442]/20 bg-white focus:outline-none focus:border-[#C5B27A] focus:ring-1 focus:ring-[#C5B27A] text-[#20262B]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-[#243442] mb-1">
+                  <label className="block text-[11px] font-medium text-[#243442] mb-0.5">
                     Email Address
                   </label>
                   <input
@@ -131,14 +148,14 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
                     value={formData.email}
                     onChange={handleChange}
                     placeholder="name@example.com"
-                    className="w-full text-xs px-3 py-2.5 rounded-lg border border-[#243442]/20 bg-white focus:outline-none focus:border-[#C5B27A] focus:ring-1 focus:ring-[#C5B27A] text-[#20262B]"
+                    className="w-full text-xs px-3 py-2 rounded-lg border border-[#243442]/20 bg-white focus:outline-none focus:border-[#C5B27A] focus:ring-1 focus:ring-[#C5B27A] text-[#20262B]"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 <div>
-                  <label className="block text-xs font-medium text-[#243442] mb-1">
+                  <label className="block text-[11px] font-medium text-[#243442] mb-0.5">
                     Patient Age
                   </label>
                   <input
@@ -147,12 +164,12 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
                     value={formData.patientAge}
                     onChange={handleChange}
                     placeholder="e.g. 5 years / 34 years"
-                    className="w-full text-xs px-3 py-2.5 rounded-lg border border-[#243442]/20 bg-white focus:outline-none focus:border-[#C5B27A] focus:ring-1 focus:ring-[#C5B27A] text-[#20262B]"
+                    className="w-full text-xs px-3 py-2 rounded-lg border border-[#243442]/20 bg-white focus:outline-none focus:border-[#C5B27A] focus:ring-1 focus:ring-[#C5B27A] text-[#20262B]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-[#243442] mb-1">
+                  <label className="block text-[11px] font-medium text-[#243442] mb-0.5">
                     Preferred Date
                   </label>
                   <input
@@ -160,20 +177,20 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
                     name="preferredDate"
                     value={formData.preferredDate}
                     onChange={handleChange}
-                    className="w-full text-xs px-3 py-2.5 rounded-lg border border-[#243442]/20 bg-white focus:outline-none focus:border-[#C5B27A] focus:ring-1 focus:ring-[#C5B27A] text-[#20262B]"
+                    className="w-full text-xs px-3 py-2 rounded-lg border border-[#243442]/20 bg-white focus:outline-none focus:border-[#C5B27A] focus:ring-1 focus:ring-[#C5B27A] text-[#20262B]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#243442] mb-1">
-                  Service Required <span className="text-[#C5B27A]">*</span>
+                <label className="block text-[11px] font-medium text-[#243442] mb-0.5">
+                  Service Required <span className="text-[#C5B27A] font-bold">*</span>
                 </label>
                 <select
                   name="serviceRequired"
                   value={formData.serviceRequired}
                   onChange={handleChange}
-                  className="w-full text-xs px-3 py-2.5 rounded-lg border border-[#243442]/20 bg-white focus:outline-none focus:border-[#C5B27A] focus:ring-1 focus:ring-[#C5B27A] text-[#20262B]"
+                  className="w-full text-xs px-3 py-2 rounded-lg border border-[#243442]/20 bg-white focus:outline-none focus:border-[#C5B27A] focus:ring-1 focus:ring-[#C5B27A] text-[#20262B]"
                 >
                   {SERVICES_DATA.map((srv) => (
                     <option key={srv.id} value={srv.title}>
@@ -190,12 +207,12 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#243442] mb-1">
+                <label className="block text-[11px] font-medium text-[#243442] mb-0.5">
                   Brief Medical Details / Symptoms
                 </label>
                 <textarea
                   name="message"
-                  rows={3}
+                  rows={2}
                   value={formData.message}
                   onChange={handleChange}
                   placeholder="Describe movement difficulties, symptom duration, or previous surgery..."
@@ -203,28 +220,28 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
                 ></textarea>
               </div>
 
-              <div className="pt-2 flex flex-col sm:flex-row gap-3">
+              <div className="pt-1.5 flex flex-col sm:flex-row gap-2.5">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 py-3 px-6 rounded-full bg-[#243442] text-[#FAF9F5] text-xs font-semibold tracking-wider hover:bg-[#344452] transition-colors shadow-sm disabled:opacity-50"
+                  className="flex-1 py-2.5 px-4 rounded-full bg-[#243442] text-[#FAF9F5] text-xs font-semibold tracking-wider hover:bg-[#344452] transition-colors shadow-xs disabled:opacity-50 cursor-pointer"
                 >
-                  {isSubmitting ? 'Processing Request...' : 'Request an Appointment'}
+                  {isSubmitting ? 'Processing...' : 'Request Appointment'}
                 </button>
 
                 <button
                   type="button"
                   onClick={handleWhatsAppDirect}
-                  className="py-3 px-4 rounded-full border border-[#C5B27A] text-[#243442] hover:bg-[#C5B27A]/15 text-xs font-medium tracking-wide flex items-center justify-center gap-2 transition-colors"
+                  className="py-2.5 px-3.5 rounded-full border border-[#C5B27A] text-[#243442] hover:bg-[#C5B27A]/15 text-xs font-medium tracking-wide flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                 >
                   <MessageSquare className="w-3.5 h-3.5 text-[#C5B27A]" />
                   <span>Send via WhatsApp</span>
                 </button>
               </div>
 
-              <div className="text-center pt-2">
+              <div className="text-center pt-1">
                 <p className="text-[11px] text-[#A7A9AA]">
-                  Or call directly at{' '}
+                  Or call clinic at{' '}
                   <a
                     href={`tel:${CLINIC_INFO.phone}`}
                     className="font-semibold text-[#243442] hover:text-[#C5B27A] underline"
@@ -236,12 +253,12 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
             </form>
           </div>
         ) : (
-          <div className="text-center py-6 space-y-4">
-            <div className="w-12 h-12 rounded-full bg-[#C5B27A]/20 text-[#243442] flex items-center justify-center mx-auto">
-              <CheckCircle2 className="w-7 h-7 text-[#243442]" />
+          <div className="text-center py-4 space-y-3">
+            <div className="w-11 h-11 rounded-full bg-[#C5B27A]/20 text-[#243442] flex items-center justify-center mx-auto">
+              <CheckCircle2 className="w-6 h-6 text-[#243442]" />
             </div>
 
-            <h3 className="font-serif text-2xl font-semibold text-[#243442]">
+            <h3 className="font-serif text-xl sm:text-2xl font-semibold text-[#243442]">
               Appointment Request Received
             </h3>
 
@@ -260,11 +277,11 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
               </p>
             </div>
 
-            <div className="pt-3 flex flex-col sm:flex-row gap-2 justify-center">
+            <div className="pt-2 flex flex-col sm:flex-row gap-2 justify-center">
               <button
                 type="button"
                 onClick={handleWhatsAppDirect}
-                className="py-2.5 px-5 rounded-full bg-[#243442] text-[#FAF9F5] text-xs font-medium tracking-wide hover:bg-[#344452] transition-colors flex items-center justify-center gap-2"
+                className="py-2.5 px-4 rounded-full bg-[#243442] text-[#FAF9F5] text-xs font-medium tracking-wide hover:bg-[#344452] transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <MessageSquare className="w-3.5 h-3.5 text-[#C5B27A]" />
                 Direct WhatsApp Confirmation
@@ -272,9 +289,9 @@ export const AppointmentModal: React.FC<AppointmentModalProps> = ({
               <button
                 type="button"
                 onClick={handleReset}
-                className="py-2.5 px-5 rounded-full border border-[#243442]/20 text-xs font-medium text-[#344452] hover:bg-[#243442]/5 transition-colors"
+                className="py-2.5 px-4 rounded-full border border-[#243442]/20 text-xs font-medium text-[#344452] hover:bg-[#243442]/5 transition-colors cursor-pointer"
               >
-                Close
+                Close Window
               </button>
             </div>
           </div>
